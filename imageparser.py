@@ -4,12 +4,19 @@ class Parser:
     """Parser object for parsing bitmaps into graphs"""
 
     def __init__(self, image):
-        """creates parser object, with associated pillow image"""
+        """
+        creates parser object, with associated pillow image
+        
+        *image, PIL.Image : pillow image
+        """
 
         self.image = image
         self.graph = {}
     
     def add_node(self, col, row):
+        '''
+        Adds a node to the graph at (col, row), and adding potential edges
+        '''
         self.graph[(col,row)] = []
 
         try:
@@ -36,6 +43,10 @@ class Parser:
         return self.graph
 
     def optimize_graph(self):
+        '''
+        Optimizes this object's graph by deleting unnecesary nodes
+        '''
+
         toDelete = []
         for node in list(self.graph.keys()):
             if len(self.graph[node]) == 2:
