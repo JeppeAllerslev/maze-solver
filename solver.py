@@ -1,4 +1,5 @@
 from collections import deque
+from os import O_APPEND
 from imageparser import Parser
 from PIL import Image
 import time
@@ -54,7 +55,7 @@ class Solver:
         Save the maze with given path drawn in the 'mazes' folder as imageName-solved.bmp
 
         *path, [(int, int)] : list of nodes in path to draw
-        *fill, bool : fill out pixels between nodes?
+        *fill, bool : fill out pixels between nodes
         '''
 
         print("saving...")
@@ -78,8 +79,47 @@ class Solver:
         print("saved as", self.imageName.replace(".bmp", "-solved.bmp"))
 
     def bfs_direct(self):
-        path = []
+        '''
+        Create graph from image and solve it using bfs. Then returns the path as a list of nodes.
 
+        This method uses bfs directly, without first parsing to image to a graph. This method should be much faster
+        '''
+
+        startTime = self.current_time_millis()
+        path = []
+        visited = [[False for _ in range(self.image.size[0])] for _ in range(self.image.size[1])]
+        prev = [[None for _ in range(self.image.size[0])] for _ in range(self.image.size[1])]
+        Q = deque([(self.start[0], self.start[1])])
+        while len(Q) > 0:
+            node = Q.popleft()
+            visited[node[0]][node[1]] = True
+            if node == (self.stop[0], self.stop[1]): pass
+
+            adjs = []
+            adjs.append((node[0] - 1, node[1]))
+            adjs.append((node[0], node[1] - 1))
+            adjs.append((node[0] + 1, node[1]))
+            adjs.append((node[0], node[1] + 1))
+
+            for adj in adjs:
+                try:
+                    if not visited[adj[0]][adj[1]] and self.image.getpixel(adj) == (255, 255, 255):
+                        visited[adj[0]][adj[1]] = True
+                        prev[adj[0]][adj[1]] = node
+                        Q.append(adj)
+                except IndexError:
+                    pass
+
+        if visited[self.stop[0]][self.stop[1]]:
+            node = (self.stop[0], self.stop[1])
+            while node != (self.start[0], self.start[1]):
+                path.append(node)
+                node = prev[node[0]][node[1]]
+            path.append((self.start[0], self.start[1]))
+
+        print("Solved:", round((self.current_time_millis() - startTime)/1000, 3), "seconds." )
+        print("Path length (nodes):", len(path))
+        return path
 
     def bfs(self, optimize):
         '''

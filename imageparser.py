@@ -27,8 +27,6 @@ class Parser:
         except IndexError:
             pass
 
-        #print("Added node: ", (col,row), "With incidence list: ", self.graph[(col,row)])
-
     def parse_to_graph(self):
         """parses this objects's image into a graph, and returns it"""
 
