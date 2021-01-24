@@ -48,7 +48,7 @@ class Parser:
         '''
 
         toDelete = []
-        for node in list(self.graph.keys()):
+        for node in self.graph.keys():
             if len(self.graph[node]) == 2:
                 adj1 = self.graph[node][0]
                 adj2 = self.graph[node][1]

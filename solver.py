@@ -49,25 +49,31 @@ class Solver:
             self.graph = self.parser.optimize_graph()
             print("Optimized:", round((self.current_time_millis() - startTime)/1000, 3), "seconds." )
 
-    def save_with_path(self, path):
+    def save_with_path(self, path, fill = True):
         '''
         Save the maze with given path drawn in the 'mazes' folder as imageName-solved.bmp
 
         *path, [(int, int)] : list of nodes in path to draw
+        *fill, bool : fill out pixels between nodes?
         '''
 
         print("saving...")
-        prev = self.stop
-        for node in path:
-            if node[0] == prev[0]:
-                biggest = max(node[1],prev[1])
-                for j in range(abs(node[1] - prev[1]) + 1):
-                    self.image.putpixel((node[0], biggest - j), (255,0,0))
-            else:
-                biggest = max(node[0],prev[0])
-                for j in range(abs(node[0] - prev[0]) + 1):
-                    self.image.putpixel((biggest - j,node[1]), (255,0,0))
-            prev = node
+
+        if fill:
+            prev = self.stop
+            for node in path:
+                if node[0] == prev[0]:
+                    biggest = max(node[1],prev[1])
+                    for j in range(abs(node[1] - prev[1]) + 1):
+                        self.image.putpixel((node[0], biggest - j), (255,0,0))
+                else:
+                    biggest = max(node[0],prev[0])
+                    for j in range(abs(node[0] - prev[0]) + 1):
+                        self.image.putpixel((biggest - j,node[1]), (255,0,0))
+                prev = node
+        else:
+            for node in path:
+                self.image.putpixel(node, (255,0 , 0))
         self.image.save("mazes/"+self.imageName.replace(".bmp", "-solved.bmp"))
         print("saved as", self.imageName.replace(".bmp", "-solved.bmp"))
 
